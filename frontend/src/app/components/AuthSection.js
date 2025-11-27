@@ -6,6 +6,8 @@ import { useAuth } from "../context/AuthContext"; // Adjust the path to your Aut
 import { auth } from "../../../utils/firebase"; 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export default function AuthSection() {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({ email: "", password: "", firstName: "", lastName: "" });
@@ -47,7 +49,7 @@ export default function AuthSection() {
         };
 
         // Register user in your database
-        const response = await fetch("http://localhost:8000/api/users", {
+        const response = await fetch(`${API_URL}/api/users`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -82,7 +84,7 @@ export default function AuthSection() {
             <Button type="submit" fullWidth variant="contained" color="primary">Login</Button>
           </form>
           <Button fullWidth variant="text" color="secondary" onClick={() => setIsLogin(false)} sx={{ mt: 2 }}>
-            Don't have an account? Register Now!
+            Don&apos;t have an account? Register Now!
           </Button>
         </>
       ) : (

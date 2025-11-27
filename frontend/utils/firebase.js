@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -24,6 +24,14 @@ if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+// Enable persistence for authentication
+if (typeof window !== "undefined") {
+  setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.error("Error setting auth persistence:", error);
+  });
+}
+
 const db = getFirestore(app);
 const storage = getStorage(app);
 

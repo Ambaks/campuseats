@@ -1,6 +1,8 @@
 "use client";
 import { createContext, useState, useEffect, useContext } from "react";
 import { useAuth } from "./AuthContext";
+import { auth } from "../../../utils/firebase";
+import { getIdToken } from "firebase/auth";
 
 const CartContext = createContext();
 
@@ -173,17 +175,20 @@ export const CartProvider = ({ children }) => {
     try {
       setError(null);
       if (user && user.id) {
-        const token = await user.getIdToken();
-        const response = await fetch(`${API_URL}/api/clear-cart`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const token = await getIdToken(currentUser);
+          const response = await fetch(`${API_URL}/api/clear-cart`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+          });
 
-        if (!response.ok) {
-          throw new Error("Failed to clear cart");
+          if (!response.ok) {
+            throw new Error("Failed to clear cart");
+          }
         }
       } else {
         localStorage.removeItem("cart");

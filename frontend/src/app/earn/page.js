@@ -45,7 +45,7 @@ export default function SellerDashboard() {
         console.error("Error fetching chef orders/meals:", error);
       }
     }
-    if (user?.uid) {
+    if (user?.id) {
       loadChefMeals();
     }
   }, [user]);

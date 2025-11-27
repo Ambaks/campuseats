@@ -28,9 +28,10 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.status === 404) {
-        // User not found in database - might be newly created
-        console.log("User not found in database, might need to complete profile");
-        return { ...firebaseUser, needsProfileSetup: true };
+        // User not found in database - this is a stale Firebase session
+        console.warn("User exists in Firebase but not in database. Logging out...");
+        await firebaseSignOut(auth);
+        throw new Error("User not found in database. Please register again.");
       }
 
       if (!response.ok) {
@@ -73,20 +74,30 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    // Set up auth state observer with persistence
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       setError(null);
 
       if (currentUser) {
         try {
+          console.log("Auth state changed - user logged in:", currentUser.uid);
           const userData = await fetchUserData(currentUser);
+          console.log("User data fetched successfully:", userData);
           setUser(userData);
         } catch (error) {
           console.error("Error in auth state change:", error);
           setError("Failed to load user data");
-          setUser(null);
+          // Set user with uid mapped to id for consistency
+          setUser({
+            ...currentUser,
+            id: currentUser.uid,
+            email: currentUser.email,
+            needsProfileSetup: true
+          });
         }
       } else {
+        console.log("Auth state changed - user logged out");
         setUser(null);
       }
 

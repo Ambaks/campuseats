@@ -4,6 +4,7 @@ import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
 
 const OrderContext = createContext();
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export const OrderProvider = ({ children }) => {
   const { cart } = useCart(); // Get cart data
@@ -23,7 +24,7 @@ export const OrderProvider = ({ children }) => {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/orders/${user.id}`, {
+      const response = await fetch(`${API_URL}/api/orders/${user.id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

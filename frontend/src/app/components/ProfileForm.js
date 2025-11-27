@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { TextField, Button, Avatar, MenuItem, Typography } from "@mui/material";
-import { CloudUpload } from "@mui/icons-material";
+import { TextField, Button, Avatar, MenuItem, Typography, Box } from "@mui/material";
+import { CloudUpload, Logout } from "@mui/icons-material";
 import { checkUsername } from "../services/api";
+import { auth } from "../../../utils/firebase";
+import { getIdToken } from "firebase/auth";
+import { useAuth } from "../context/AuthContext";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function ProfileForm({ user, setUser }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const { logout } = useAuth();
 
 
   // Handle input change
@@ -56,10 +62,19 @@ export default function ProfileForm({ user, setUser }) {
     };
 
     try {
-      const response = await fetch(`http://localhost:8000/api/users/${user.id}`, {
+      // Get the authentication token
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        throw new Error("You must be logged in to update your profile");
+      }
+
+      const token = await getIdToken(currentUser);
+
+      const response = await fetch(`${API_URL}/api/users/${user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(userData),
       });
@@ -78,11 +93,34 @@ export default function ProfileForm({ user, setUser }) {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      // Clear local storage
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch (error) {
+      console.error("Error logging out:", error);
+      setError("Failed to logout");
+    }
+  };
+
   return (
     <>
-      <Typography variant="h5" align="center" gutterBottom>
-        Edit Profile
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5" align="center" gutterBottom sx={{ flex: 1 }}>
+          Edit Profile
+        </Typography>
+        <Button
+          variant="outlined"
+          color="error"
+          startIcon={<Logout />}
+          onClick={handleLogout}
+          size="small"
+        >
+          Logout
+        </Button>
+      </Box>
 
       {/* Profile Picture */}
       <div className="flex flex-col items-center my-4">
