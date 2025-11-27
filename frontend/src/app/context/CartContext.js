@@ -1,135 +1,225 @@
 "use client";
 import { createContext, useState, useEffect, useContext } from "react";
-import { useAuth } from "./AuthContext"; // Assuming you use Firebase Auth
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { user } = useAuth();
 
-  // Load cart from backend if logged in
+  // Load cart from backend or localStorage
   useEffect(() => {
-
-    if (user && user.id) {
-      fetch(`http://localhost:8000/api/cart/${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
+    const loadCart = async () => {
+      if (user && user.id) {
+        try {
+          setLoading(true);
+          const response = await fetch(`${API_URL}/api/cart/${user.id}`);
+          
+          if (!response.ok) {
+            throw new Error("Failed to fetch cart");
+          }
+          
+          const data = await response.json();
           setCart(data.cart_items || []);
-          console.log("Cart successfully loaded:", JSON.stringify(data.cart_items, null, 2));
-        })
-        .catch((error) => console.error("Error fetching cart:", error));
-    } else {
-      const localCart = localStorage.getItem("cart");
-      setCart(localCart ? JSON.parse(localCart) : []);
-    }
+          setError(null);
+        } catch (error) {
+          console.error("Error fetching cart:", error);
+          setError("Failed to load cart");
+          
+          // Fallback to localStorage
+          const localCart = localStorage.getItem("cart");
+          if (localCart) {
+            setCart(JSON.parse(localCart));
+          }
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        // Load from localStorage for non-authenticated users
+        try {
+          const localCart = localStorage.getItem("cart");
+          setCart(localCart ? JSON.parse(localCart) : []);
+        } catch (error) {
+          console.error("Error loading cart from localStorage:", error);
+          setCart([]);
+        }
+      }
+    };
+
+    loadCart();
   }, [user]);
 
-  // Add or update an item in the cart
+  // Add or update item in cart
   const addToCart = async (meal) => {
-    let updatedCart = [...cart];
-
-    const normalizedMeal = {
-      meal_id: meal.mealId || meal.meal_id, // Ensure meal_id is set
-      name: meal.name,
-      price: meal.price,
-      quantity: meal.quantity || 1, // Default quantity to 1 if not provided
-    };
-  // Check if the meal already exists in the cart and update the quantity
-  const existingItemIndex = updatedCart.findIndex((item) => item.meal_id === normalizedMeal.meal_id);
-  if (existingItemIndex !== -1) {
-    updatedCart[existingItemIndex] = {
-      ...updatedCart[existingItemIndex],
-      quantity: updatedCart[existingItemIndex].quantity + normalizedMeal.quantity,
-    };
-  } else {
-    updatedCart.push(normalizedMeal);
-  }
-
-  // Update cart in backend or local storage
-  if (user && user.id) {
     try {
-      const response = await fetch(`http://localhost:8000/api/cart/${user.id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedCart),
-      });
-      if (!response.ok) throw new Error("Failed to update cart on backend");
-    } catch (error) {
-      console.error("Error updating cart:", error);
-      return;
-    }
-  } else {
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  }
+      setError(null);
+      let updatedCart = [...cart];
 
-  // Update the cart in state
-  setCart(updatedCart);
+      const normalizedMeal = {
+        meal_id: meal.mealId || meal.meal_id || meal.id,
+        name: meal.name,
+        price: meal.price,
+        quantity: meal.quantity || 1,
+        image_url: meal.image_url || meal.imageUrl,
+      };
+
+      // Check if meal already exists and update quantity
+      const existingItemIndex = updatedCart.findIndex(
+        (item) => item.meal_id === normalizedMeal.meal_id
+      );
+
+      if (existingItemIndex !== -1) {
+        updatedCart[existingItemIndex] = {
+          ...updatedCart[existingItemIndex],
+          quantity: updatedCart[existingItemIndex].quantity + normalizedMeal.quantity,
+        };
+      } else {
+        updatedCart.push(normalizedMeal);
+      }
+
+      // Update backend or localStorage
+      if (user && user.id) {
+        const response = await fetch(`${API_URL}/api/cart/${user.id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedCart),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update cart on backend");
+        }
+      } else {
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+      }
+
+      setCart(updatedCart);
+      return { success: true };
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      setError("Failed to add item to cart");
+      return { success: false, error: error.message };
+    }
   };
 
   // Remove item from cart
   const removeFromCart = async (mealId) => {
-    const updatedCart = cart.filter((item) => item.meal_id !== mealId);
-    
+    try {
+      setError(null);
+      const updatedCart = cart.filter((item) => item.meal_id !== mealId);
 
-    if (user && user.id) {
-      try {
-        const response = await fetch(`http://localhost:8000/api/cart/${user.id}/${mealId}`, {
+      if (user && user.id) {
+        const response = await fetch(`${API_URL}/api/cart/${user.id}/${mealId}`, {
           method: "DELETE",
         });
 
-        if (!response.ok) throw new Error("Failed to remove item from backend cart");
-      } catch (error) {
-        console.error("Error removing item from cart:", error);
-        return;
+        if (!response.ok) {
+          throw new Error("Failed to remove item from cart");
+        }
+      } else {
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
       }
-    } else {
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-      console.log("Cart successfully updated in localStorage: ", updatedCart)
+
+      setCart(updatedCart);
+      return { success: true };
+    } catch (error) {
+      console.error("Error removing from cart:", error);
+      setError("Failed to remove item from cart");
+      return { success: false, error: error.message };
     }
-    setCart(updatedCart);
   };
 
-  // Update quantity of an item
-  const updateQuantity = async (mealId, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeFromCart(mealId);
-      return;
-    }
+  // Update item quantity
+  const updateQuantity = async (mealId, quantity) => {
+    try {
+      setError(null);
+      if (quantity <= 0) {
+        return await removeFromCart(mealId);
+      }
 
-    const updatedCart = cart.map((item) =>
-      item.meal_id === mealId ? { ...item, quantity: newQuantity } : item
-    );
+      const updatedCart = cart.map((item) =>
+        item.meal_id === mealId ? { ...item, quantity } : item
+      );
 
-    if (user && user.id) {
-      try {
-        const response = await fetch(`http://localhost:8000/api/cart/${user.id}`, {
+      if (user && user.id) {
+        const response = await fetch(`${API_URL}/api/cart/${user.id}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify( updatedCart ),
+          body: JSON.stringify(updatedCart),
         });
 
-        if (!response.ok) throw new Error("Failed to update cart quantity on backend");
-      } catch (error) {
-        console.error("Error updating cart quantity:", error);
-        return;
+        if (!response.ok) {
+          throw new Error("Failed to update quantity");
+        }
+      } else {
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
       }
-    } else {
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+      setCart(updatedCart);
+      return { success: true };
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      setError("Failed to update quantity");
+      return { success: false, error: error.message };
     }
-    setCart(updatedCart);
   };
 
-  return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity }}>
-      {children}
-    </CartContext.Provider>
-  );
+  // Clear entire cart
+  const clearCart = async () => {
+    try {
+      setError(null);
+      if (user && user.id) {
+        const token = await user.getIdToken();
+        const response = await fetch(`${API_URL}/api/clear-cart`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to clear cart");
+        }
+      } else {
+        localStorage.removeItem("cart");
+      }
+
+      setCart([]);
+      return { success: true };
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+      setError("Failed to clear cart");
+      return { success: false, error: error.message };
+    }
+  };
+
+  // Calculate totals
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const value = {
+    cart,
+    loading,
+    error,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    totalPrice,
+    itemCount,
+  };
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useCart must be used within a CartProvider");
   }
   return context;

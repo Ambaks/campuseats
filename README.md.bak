@@ -3,7 +3,7 @@
 > A full-stack peer-to-peer food marketplace platform connecting campus meal providers with hungry students through location-based discovery and real-time ordering.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.2.2-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.1.0-61dafb)](https://react.dev/)
+[![React](https://img.shields.io/badge/React-19.0-61dafb)](https://react.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688)](https://fastapi.tiangolo.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791)](https://www.postgresql.org/)
 [![Firebase](https://img.shields.io/badge/Firebase-11.4.0-FFCA28)](https://firebase.google.com/)
@@ -33,21 +33,6 @@
 - Firebase account (for authentication)
 - Stripe account (for payments)
 
-
-**Important:** Before running the application, you must set up environment variables. Copy the example files and fill in your actual values:
-```bash
-# Root directory
-cp .env.example .env
-
-# Backend
-cp backend/.env.example backend/.env
-
-# Frontend
-cp frontend/.env.example frontend/.env.local
-```
-
-See [.env.example](.env.example), [backend/.env.example](backend/.env.example), and [frontend/.env.example](frontend/.env.example) for required variables.
-
 ### Running the Application
 
 This project requires **two terminal windows** running simultaneously - one for the backend server and one for the frontend application.
@@ -63,19 +48,19 @@ python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
-pip install -r app/requirements.txt
+pip install -r requirements.txt
 
 # Set up environment variables
 # Create a .env file with:
-# DATABASE_URL=postgresql://postgres:pass@localhost:5432/campuseats
-# FIREBASE_CREDENTIALS_PATH=./campuseats-firebase-adminsdk.json
+# DATABASE_URL=postgresql://Ambaks:pass@localhost:5432/campuseats
+# FIREBASE_CREDENTIALS_PATH=path/to/firebase-credentials.json
 # STRIPE_SECRET_KEY=sk_test_...
 # STRIPE_WEBHOOK_SECRET=whsec_...
 
 # Start PostgreSQL (if using Docker)
 docker-compose up -d db
 
-# Run database migrations (from backend directory)
+# Run database migrations
 alembic upgrade head
 
 # Start the FastAPI server
@@ -497,6 +482,7 @@ meals.forEach(meal => {
 | **Material-UI** | 6.4.7 | Component library providing pre-built accessible components |
 | **Tailwind CSS** | 4.0 | Utility-first CSS framework for rapid UI development |
 | **Mapbox GL** | 3.10.0 | Interactive vector maps with 3D capabilities |
+| **Leaflet** | 1.9.4 | Open-source map library for basic mapping features |
 | **Firebase** | 11.4.0 | Authentication, storage, and real-time capabilities |
 | **Stripe.js** | 6.1.0 | Payment processing and checkout components |
 | **React Icons** | 5.5.0 | Icon library with 40+ icon sets |
@@ -552,7 +538,7 @@ CampusEats_MVP/
 │   │   │   │   ├── ProfileForm.js     # Profile editor
 │   │   │   │   ├── Menu.js            # Seller menu manager
 │   │   │   │   ├── SearchBar.js       # Search functionality
-│   │   │   │   └── MapComponent.js    # Map component
+│   │   │   │   └── MapComponent.js    # Leaflet wrapper
 │   │   │   ├── context/               # React Context providers
 │   │   │   │   ├── AuthContext.js     # Authentication state
 │   │   │   │   ├── CartContext.js     # Shopping cart state
@@ -1050,7 +1036,7 @@ cd CampusEats_MVP
 
 **Backend (.env)**
 ```env
-DATABASE_URL=postgresql://postgres:pass@localhost:5432/campuseats
+DATABASE_URL=postgresql://Ambaks:pass@localhost:5432/campuseats
 FIREBASE_CREDENTIALS_PATH=/path/to/firebase-admin-sdk.json
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
@@ -1159,36 +1145,6 @@ alembic downgrade -1
 ```
 
 ---
-
-
-## Security
-
-### Important Security Notes
-
-**CRITICAL - Never commit sensitive files to git:**
-- Firebase service account JSON files
-- `.env` files containing API keys
-- Any files with actual credentials
-
-**Proper Setup:**
-1. All sensitive files are listed in `.gitignore`
-2. Use `.env.example` files as templates
-3. Store actual credentials in `.env` files (git-ignored)
-4. For production, use environment variables or secret management services
-
-**If you accidentally committed secrets:**
-1. Immediately rotate all exposed keys (Firebase, Stripe, database passwords)
-2. Remove files from git history using `git filter-branch` or BFG Repo-Cleaner
-3. Force push to remote (coordinate with team first)
-
-### Authentication Flow
-Firebase handles user authentication. Backend verifies Firebase ID tokens on protected endpoints.
-
-### Payment Security
-- Stripe handles all payment processing (PCI compliant)
-- Webhook signatures verified to prevent tampering
-- Orders only created after successful payment confirmation
-
 
 ## Deployment
 
@@ -1301,41 +1257,3 @@ For questions or collaboration opportunities:
 
 **Built with passion by [Your Name]**
 *Software Engineering Intern Candidate*
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-#### Backend won't start
-- **Check PostgreSQL connection**: Ensure PostgreSQL is running and DATABASE_URL is correct
-- **Check port 8000**: Make sure nothing else is using port 8000 (`lsof -i :8000`)
-- **Missing dependencies**: Run `pip install -r app/requirements.txt` from backend directory
-- **Missing .env file**: Copy `backend/.env.example` to `backend/.env` and fill in values
-
-#### Frontend won't start
-- **Check port 3000**: Make sure nothing else is using port 3000 (`lsof -i :3000`)
-- **Missing dependencies**: Run `npm install` from frontend directory
-- **Missing .env.local**: Copy `frontend/.env.example` to `frontend/.env.local` and fill in Firebase/Stripe/Mapbox keys
-
-#### Alembic migration errors
-- **Run from backend directory**: `cd backend` then `alembic upgrade head`
-- **Database connection**: Verify DATABASE_URL in backend/.env
-- **Clean slate**: Drop and recreate database if needed (development only)
-
-#### Firebase Authentication errors
-- **Check Firebase credentials**: Ensure all Firebase env variables are set correctly
-- **Check backend credentials**: Verify FIREBASE_CREDENTIALS_PATH points to valid JSON file
-- **CORS errors**: Make sure FRONTEND_URL is set in backend/.env
-
-#### Docker issues
-- **Port conflicts**: Check if ports 5432, 8000, or 3000 are already in use
-- **Database user mismatch**: Ensure DATABASE_URL uses `postgres` as username (matches docker-compose.yml)
-- **Build failures**: Try `docker-compose down -v` then `docker-compose up --build`
-
-### Getting Help
-- Check the [API Documentation](docs/API.md)
-- Review [Issues](https://github.com/yourusername/campuseats/issues) for known problems
-- Enable detailed logging by checking backend console output
-

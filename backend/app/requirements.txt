@@ -1,11 +1,27 @@
-fastapi
-uvicorn
-sqlalchemy
-pydantic
-dotenv
-alembic
-psycopg2
-firebase-admin
-fastapi-users
-dotenv
-stripe
+# FastAPI and Server
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+
+# Database
+sqlalchemy==2.0.35
+psycopg2-binary==2.9.10
+alembic==1.13.3
+
+# Data Validation
+pydantic==2.9.2
+
+# Environment Variables
+python-dotenv==1.0.1
+
+# Firebase
+firebase-admin==6.5.0
+
+# Payments
+stripe==11.1.1
+
+# File Uploads
+python-multipart==0.0.12
+
+# CORS
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4

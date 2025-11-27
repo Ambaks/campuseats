@@ -2,25 +2,36 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend  # Path to Dockerfile
+    build: ./backend
     ports:
-      - "8080:8080"  # Maps container port 8080 to localhost:8080
+      - "8000:8000"  # Changed from 8080 to 8000 to match FastAPI default
     env_file:
-      - backend/.env  # Load environment variables
+      - backend/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:pass@db:5432/campuseats
     depends_on:
       - db
+    networks:
+      - campuseats-network
 
   db:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: Ambaks
+      POSTGRES_USER: postgres  # Changed from Ambaks to postgres for consistency
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: campuseats
     ports:
-      - "5432:5432"  # Maps container port 5432 to localhost:5432
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - campuseats-network
 
 volumes:
   postgres_data:
+
+networks:
+  campuseats-network:
+    driver: bridge
