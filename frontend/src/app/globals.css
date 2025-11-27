@@ -1,0 +1,85 @@
+@import "tailwindcss";
+@import "@fontsource/poppins"; 
+@import "@fontsource/poppins/500.css"; 
+@import "@fontsource/poppins/700.css"; 
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #FF7F51;
+    --foreground: #000000;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.user-location-marker {
+  position: relative;
+  z-index: 500; /* VERY high z-index */
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #007AFF;
+  box-shadow: 0 0 0 rgba(0, 122, 255, 0.7);
+  animation: pulse 2s infinite;
+  cursor: pointer;
+  border: 2px solid white;
+  pointer-events: auto; /* Allows interaction */
+}
+
+.user-location-marker::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  width: 16px;
+  height: 16px;
+  background: #007AFF;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #007AFF;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 122, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 122, 255, 0);
+  }
+}
+
+
+.meal-marker {
+  width: 40px;
+  height: 40px;
+  background-size: cover;
+  border-radius: 50%; /* Makes it circular */
+  border: 3px solid #FF5733; /* Nice border color, choose your favorite! */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Optional: Adds a subtle shadow */
+  transition: transform 0.3s ease-in-out, border-color 0.3s ease-in-out; /* Smooth transition for zoom and border color */
+}
+
+.meal-marker:hover {
+  transform: scale(4); /* Makes the circle 4x larger on hover */
+  border-color: #33FF57; /* Optional: Changes border color on hover */
+  z-index: 1000; /* Ensures the zoomed marker appears above others */
+}
+
