@@ -9,6 +9,7 @@ alembic==1.13.3
 
 # Data Validation
 pydantic==2.9.2
+email-validator==2.1.0
 
 # Environment Variables
 python-dotenv==1.0.1
@@ -25,3 +26,6 @@ python-multipart==0.0.12
 # CORS
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
+
+# Seeding/Testing
+faker==30.8.2

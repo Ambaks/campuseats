@@ -112,17 +112,219 @@ npm run dev
 
 The frontend will be running at `http://localhost:3000`
 
-### Using Docker Compose (Alternative)
+### Using Docker Compose (Recommended)
+
+Docker Compose provides the easiest way to run the CampusEats backend and database with a single command.
+
+#### Prerequisites
+- Docker Desktop installed and running
+- Docker Compose (included with Docker Desktop)
+
+#### Initial Setup
+
+1. **Configure Environment Variables**
+
+First, ensure your `backend/.env` file is properly configured:
 
 ```bash
-# Start both backend and database
-docker-compose up
-
-# Frontend still needs to run separately
-cd frontend && npm run dev
+# Copy the example file
+cp backend/.env.example backend/.env
 ```
 
----
+Edit `backend/.env` with your actual credentials:
+```env
+# Database Configuration (matches docker-compose.yml)
+DATABASE_URL=postgresql://postgres:pass@localhost:5432/campuseats
+
+# Stripe Configuration
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+
+# Firebase Admin SDK Configuration
+FIREBASE_CREDENTIALS_PATH=./campuseats-bf7cc-firebase-adminsdk-fbsvc-07e06423b7.json
+
+# Frontend URL (for CORS)
+FRONTEND_URL=http://localhost:3000
+```
+
+2. **Start the Services**
+
+From the project root directory:
+
+```bash
+# Build and start both backend and database
+docker-compose up --build
+
+# Or run in detached mode (background)
+docker-compose up --build -d
+```
+
+This will start:
+- **PostgreSQL database** on port 5432
+- **FastAPI backend** on port 8000
+
+The backend API will be available at `http://localhost:8000`  
+API documentation will be at `http://localhost:8000/docs`
+
+3. **Seed the Database**
+
+After the services are running, populate the database with sample data:
+
+```bash
+# Seed users (chefs)
+docker-compose exec backend python -m app.seed_user_data
+
+# Seed meals
+docker-compose exec backend python -m app.seed_meal_data
+
+# Seed reviews
+docker-compose exec backend python -m app.seed_reviews
+
+# Verify the data was added
+docker-compose exec db psql -U postgres -d campuseats -c "SELECT COUNT(*) FROM users; SELECT COUNT(*) FROM meals; SELECT COUNT(*) FROM reviews;"
+```
+
+**Note:** You only need to seed the database once. The data persists in a Docker volume and will remain even after stopping/restarting containers.
+
+4. **Start the Frontend**
+
+The frontend still needs to run separately:
+
+```bash
+# In a new terminal window
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend will be available at `http://localhost:3000`
+
+#### Docker Management Commands
+
+**View running containers:**
+```bash
+docker-compose ps
+```
+
+**View logs:**
+```bash
+# All services
+docker-compose logs -f
+
+# Backend only
+docker-compose logs -f backend
+
+# Database only
+docker-compose logs -f db
+```
+
+**Stop containers (keeps data):**
+```bash
+docker-compose down
+```
+
+**Restart containers:**
+```bash
+docker-compose restart
+```
+
+**Stop and remove all data:**
+```bash
+# WARNING: This will delete all database data!
+docker-compose down -v
+```
+
+**Rebuild after code changes:**
+```bash
+# Stop containers
+docker-compose down
+
+# Rebuild and restart
+docker-compose up --build
+```
+
+#### Complete Clean Slate Setup
+
+If you want to completely reset everything and start fresh:
+
+```bash
+# 1. Stop and remove all containers, networks, and volumes
+docker-compose down -v
+
+# 2. Rebuild and start everything fresh
+docker-compose up --build -d
+
+# 3. Wait a few seconds for services to be ready
+sleep 5
+
+# 4. Seed the database in order
+docker-compose exec backend python -m app.seed_user_data
+docker-compose exec backend python -m app.seed_meal_data
+docker-compose exec backend python -m app.seed_reviews
+
+# 5. Verify the data
+docker-compose exec db psql -U postgres -d campuseats -c "SELECT COUNT(*) FROM users; SELECT COUNT(*) FROM meals; SELECT COUNT(*) FROM reviews;"
+```
+
+#### Data Persistence
+
+The database data is stored in a **Docker volume** named `campuseats_postgres_data`. This means:
+
+✅ **Data persists when you:**
+- Run `docker-compose down` and `docker-compose up`
+- Restart your computer
+- Stop and start containers with `docker-compose stop/start`
+
+❌ **Data is deleted when you:**
+- Run `docker-compose down -v` (the `-v` flag removes volumes)
+- Manually delete the volume with `docker volume rm campuseats_postgres_data`
+
+#### Troubleshooting
+
+**Backend won't start:**
+```bash
+# Check logs
+docker-compose logs backend
+
+# Common issues:
+# - Missing .env file → Copy backend/.env.example to backend/.env
+# - Missing Firebase credentials → Add the JSON file to backend/
+# - Port 8000 already in use → Stop other services or change port in docker-compose.yml
+```
+
+**Database connection errors:**
+```bash
+# Check if database is running
+docker-compose ps
+
+# Check database logs
+docker-compose logs db
+
+# Reset database
+docker-compose down -v
+docker-compose up -d db
+```
+
+**Can't connect to localhost:8000:**
+```bash
+# Check if backend is actually running
+docker-compose ps
+
+# Check if port is exposed
+docker-compose port backend 8000
+
+# Try using 127.0.0.1 instead of localhost
+curl http://127.0.0.1:8000/docs
+```
+
+**Need to access the database directly:**
+```bash
+# Open PostgreSQL shell
+docker-compose exec db psql -U postgres -d campuseats
+
+# Or from host machine (if psql is installed)
+psql postgresql://postgres:pass@localhost:5432/campuseats
+```
 
 ## Architecture Overview
 
