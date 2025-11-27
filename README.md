@@ -131,7 +131,7 @@ CampusEats follows a modern **microservices-inspired architecture** with clear s
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     Client Layer                            │
-│  Next.js 15 (React 19) + Material-UI + Tailwind CSS        │
+│  Next.js 15 (React 19.1.0) + Material-UI + Tailwind CSS        │
 │  - Server Components + Client Components                    │
 │  - Context API for Global State (Auth, Cart, Orders)       │
 └─────────────────────┬───────────────────────────────────────┘
@@ -493,7 +493,7 @@ meals.forEach(meal => {
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | **Next.js** | 15.2.2 | React framework with App Router, Server Components, and built-in optimizations |
-| **React** | 19.0 | UI library with concurrent features and improved performance |
+| **React** | 19.1.0 | UI library with concurrent features and improved performance |
 | **Material-UI** | 6.4.7 | Component library providing pre-built accessible components |
 | **Tailwind CSS** | 4.0 | Utility-first CSS framework for rapid UI development |
 | **Mapbox GL** | 3.10.0 | Interactive vector maps with 3D capabilities |
