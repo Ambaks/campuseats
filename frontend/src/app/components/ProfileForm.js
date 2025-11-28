@@ -217,14 +217,111 @@ export default function ProfileForm({ user, setUser }) {
       )}
 
       <form onSubmit={handleSubmit}>
-        <Box sx={{ display: "flex", gap: 2, mb: 2.5 }}>
+        <Box sx={{ px: 1 }}>
+          <Box sx={{ display: "flex", gap: 2, mb: 2.5}}>
+            <TextField
+              fullWidth
+              label="First Name"
+              name="first_name"
+              value={user.first_name || ""}
+              onChange={handleChange}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#FF7F51",
+                },
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Last Name"
+              name="last_name"
+              value={user.last_name || ""}
+              onChange={handleChange}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#FF7F51",
+                },
+              }}
+            />
+          </Box>
+
           <TextField
             fullWidth
-            label="First Name"
-            name="first_name"
-            value={user.first_name || ""}
+            label="Email"
+            name="email"
+            type="email"
+            value={user.email || ""}
+            onChange={handleChange}
+            disabled
+            sx={{
+              mb: 2.5,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                backgroundColor: "#f5f5f5",
+              },
+            }}
+          />
+
+          <TextField
+            fullWidth
+            label="Username"
+            name="username"
+            value={user.username || ""}
+            onChange={handleChange}
+            helperText={
+              usernameAvailable === null
+                ? "Choose a unique username"
+                : usernameAvailable
+                ? "✅ Username is available"
+                : "❌ Username is already taken"
+            }
+            error={usernameAvailable === false}
+            sx={{
+              mb: 2.5,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                "&:hover fieldset": {
+                  borderColor: "#FF7F51",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: usernameAvailable === false ? "#ff4444" : "#FF7F51",
+                },
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: usernameAvailable === false ? "#ff4444" : "#FF7F51",
+              },
+              "& .MuiFormHelperText-root": {
+                fontWeight: 500,
+              },
+            }}
+          />
+
+          <TextField
+            fullWidth
+            label="Phone"
+            name="phone_number"
+            value={user.phone_number || ""}
             onChange={handleChange}
             sx={{
+              mb: 2.5,
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
                 "&:hover fieldset": {
@@ -239,184 +336,89 @@ export default function ProfileForm({ user, setUser }) {
               },
             }}
           />
-          <TextField
+
+          <Box sx={{ display: "flex", gap: 2, mb: 2.5 }}>
+            <TextField
+              fullWidth
+              select
+              label="Gender"
+              name="gender"
+              value={user.gender || ""}
+              onChange={handleChange}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#FF7F51",
+                },
+              }}
+            >
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value="Other">Other</MenuItem>
+            </TextField>
+
+            <TextField
+              fullWidth
+              label="Age"
+              name="age"
+              type="number"
+              value={user.age || ""}
+              onChange={handleChange}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#FF7F51",
+                },
+              }}
+            />
+          </Box>
+
+          <Button
             fullWidth
-            label="Last Name"
-            name="last_name"
-            value={user.last_name || ""}
-            onChange={handleChange}
+            type="submit"
+            variant="contained"
+            disabled={loading}
+            startIcon={<Save />}
             sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                "&:hover fieldset": {
-                  borderColor: "#FF7F51",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#FF7F51",
-                },
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#FF7F51",
-              },
-            }}
-          />
-        </Box>
-
-        <TextField
-          fullWidth
-          label="Email"
-          name="email"
-          type="email"
-          value={user.email || ""}
-          onChange={handleChange}
-          disabled
-          sx={{
-            mb: 2.5,
-            "& .MuiOutlinedInput-root": {
+              backgroundColor: "#FF7F51",
+              color: "white",
+              py: 1.5,
+              fontSize: "1rem",
+              fontWeight: 600,
               borderRadius: "8px",
-              backgroundColor: "#f5f5f5",
-            },
-          }}
-        />
-
-        <TextField
-          fullWidth
-          label="Username"
-          name="username"
-          value={user.username || ""}
-          onChange={handleChange}
-          helperText={
-            usernameAvailable === null
-              ? "Choose a unique username"
-              : usernameAvailable
-              ? "✅ Username is available"
-              : "❌ Username is already taken"
-          }
-          error={usernameAvailable === false}
-          sx={{
-            mb: 2.5,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-              "&:hover fieldset": {
-                borderColor: "#FF7F51",
+              textTransform: "none",
+              boxShadow: "0 4px 12px rgba(255, 127, 81, 0.3)",
+              "&:hover": {
+                backgroundColor: "#ff6a3d",
+                boxShadow: "0 6px 16px rgba(255, 127, 81, 0.4)",
+                transform: "translateY(-1px)",
               },
-              "&.Mui-focused fieldset": {
-                borderColor: usernameAvailable === false ? "#ff4444" : "#FF7F51",
+              "&:disabled": {
+                backgroundColor: "#ccc",
+                color: "#666",
               },
-            },
-            "& .MuiInputLabel-root.Mui-focused": {
-              color: usernameAvailable === false ? "#ff4444" : "#FF7F51",
-            },
-            "& .MuiFormHelperText-root": {
-              fontWeight: 500,
-            },
-          }}
-        />
-
-        <TextField
-          fullWidth
-          label="Phone"
-          name="phone_number"
-          value={user.phone_number || ""}
-          onChange={handleChange}
-          sx={{
-            mb: 2.5,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-              "&:hover fieldset": {
-                borderColor: "#FF7F51",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#FF7F51",
-              },
-            },
-            "& .MuiInputLabel-root.Mui-focused": {
-              color: "#FF7F51",
-            },
-          }}
-        />
-
-        <Box sx={{ display: "flex", gap: 2, mb: 2.5 }}>
-          <TextField
-            fullWidth
-            select
-            label="Gender"
-            name="gender"
-            value={user.gender || ""}
-            onChange={handleChange}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                "&:hover fieldset": {
-                  borderColor: "#FF7F51",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#FF7F51",
-                },
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#FF7F51",
-              },
+              transition: "all 0.3s ease",
             }}
           >
-            <MenuItem value="Male">Male</MenuItem>
-            <MenuItem value="Female">Female</MenuItem>
-            <MenuItem value="Other">Other</MenuItem>
-          </TextField>
-
-          <TextField
-            fullWidth
-            label="Age"
-            name="age"
-            type="number"
-            value={user.age || ""}
-            onChange={handleChange}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                "&:hover fieldset": {
-                  borderColor: "#FF7F51",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#FF7F51",
-                },
-              },
-              "& .MuiInputLabel-root.Mui-focused": {
-                color: "#FF7F51",
-              },
-            }}
-          />
+            {loading ? "Saving Changes..." : "Save Changes"}
+          </Button>
         </Box>
-
-        <Button
-          fullWidth
-          type="submit"
-          variant="contained"
-          disabled={loading}
-          startIcon={<Save />}
-          sx={{
-            backgroundColor: "#FF7F51",
-            color: "white",
-            py: 1.5,
-            fontSize: "1rem",
-            fontWeight: 600,
-            borderRadius: "8px",
-            textTransform: "none",
-            boxShadow: "0 4px 12px rgba(255, 127, 81, 0.3)",
-            "&:hover": {
-              backgroundColor: "#ff6a3d",
-              boxShadow: "0 6px 16px rgba(255, 127, 81, 0.4)",
-              transform: "translateY(-1px)",
-            },
-            "&:disabled": {
-              backgroundColor: "#ccc",
-              color: "#666",
-            },
-            transition: "all 0.3s ease",
-          }}
-        >
-          {loading ? "Saving Changes..." : "Save Changes"}
-        </Button>
       </form>
     </Box>
   );
