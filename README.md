@@ -402,7 +402,7 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
 
 ### 6. Seller Dashboard (Earn Section)
 
-**[INSERT SCREENSHOT: Seller dashboard with tabs - Menu, Orders, History, Analytics, Settings]**
+<video src="https://github.com/user-attachments/assets/cdc7ec8d-6151-408f-b08c-47104abf80d3" controls></video>
 
 The seller dashboard provides a comprehensive management interface for meal providers.
 
@@ -526,7 +526,7 @@ meals.forEach(meal => {
 
 ### 8. User Profile Management
 
-**[INSERT SCREENSHOT: Profile page with form fields and avatar upload]**
+<image src="![](./github_assets/my_profile_form.png)">
 
 - **Profile Completion Flow**: Prompts new users to complete profile after registration
 - **Username Validation**: Real-time uniqueness check against database
