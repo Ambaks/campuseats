@@ -375,7 +375,7 @@ CampusEats follows a modern **microservices-inspired architecture** with clear s
 
 ### 1. Location-Based Meal Discovery
 
-<video src="https://github.com/Ambaks/campuseats/issues/4#issue-3673828149" controls></video>
+<video src="https://github.com/user-attachments/assets/7fb5c4b2-ab3e-4100-9cd6-bc39b592c9fb" controls></video>
 
 - **Automatic Geolocation**: Browser geolocation API captures user coordinates with fallback handling for denied permissions
 - **Haversine Distance Calculation**: Backend implements the spherical distance formula for accurate kilometer/meter calculations:
