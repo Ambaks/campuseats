@@ -18,7 +18,6 @@
 - [Project Structure](#project-structure)
 - [System Design & Implementation](#system-design--implementation)
 - [API Documentation](#api-documentation)
-- [Development Workflow](#development-workflow)
 
 ---
 
