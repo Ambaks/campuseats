@@ -375,7 +375,7 @@ CampusEats follows a modern **microservices-inspired architecture** with clear s
 
 ### 1. Location-Based Meal Discovery
 
-**[INSERT VIDEO: Home page showing meal discovery with location permission and distance calculations]**
+<video src="https://github.com/Ambaks/campuseats/issues/4#issue-3673828149" controls></video>
 
 - **Automatic Geolocation**: Browser geolocation API captures user coordinates with fallback handling for denied permissions
 - **Haversine Distance Calculation**: Backend implements the spherical distance formula for accurate kilometer/meter calculations:
@@ -431,7 +431,7 @@ GET /api/users/{uid} → Merge Firebase + DB data → Update context
 
 ### 3. Interactive Meal Cards with 3D Flip Animation
 
-**[INSERT VIDEO: Meal card flip animation showing front and back]**
+<video src="https://github.com/user-attachments/assets/d8e9e341-f4af-457b-8f4b-cfc58a6a74e2" controls></video>
 
 ```css
 /* CSS 3D Transform Implementation */
