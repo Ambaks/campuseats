@@ -526,7 +526,7 @@ meals.forEach(meal => {
 
 ### 8. User Profile Management
 
-<image src="![](./github_assets/my_profile_form.png)">
+<image src="./github_assets/my_profile_form.png" height="300px>
 
 - **Profile Completion Flow**: Prompts new users to complete profile after registration
 - **Username Validation**: Real-time uniqueness check against database
