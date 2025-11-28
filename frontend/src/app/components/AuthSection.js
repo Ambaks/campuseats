@@ -11,7 +11,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function AuthSection() {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ email: "", password: "", firstName: "", lastName: "" });
+  const [formData, setFormData] = useState({ email: "", password: "", confirmPassword: "", firstName: "", lastName: "" });
   const [error, setError] = useState(null);
   const { user } = useAuth();
 
@@ -33,6 +33,12 @@ export default function AuthSection() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setError(null);
+
+  // Check if passwords match
+  if (formData.password !== formData.confirmPassword) {
+    setError("Passwords do not match");
+    return;
+  }
 
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
@@ -276,12 +282,41 @@ export default function AuthSection() {
             />
             <TextField
               fullWidth
-              label="Confirm Password"
+              label="Password"
               name="password"
               type="password"
               required
               value={formData.password}
               onChange={handleChange}
+              sx={{
+                mb: 2.5,
+                "& .MuiOutlinedInput-root": {
+                  "&:hover fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#FF7F51",
+                  },
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#FF7F51",
+                },
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Confirm Password"
+              name="confirmPassword"
+              type="password"
+              required
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              error={formData.confirmPassword && formData.password !== formData.confirmPassword}
+              helperText={
+                formData.confirmPassword && formData.password !== formData.confirmPassword
+                  ? "Passwords do not match"
+                  : ""
+              }
               sx={{
                 mb: 3,
                 "& .MuiOutlinedInput-root": {
