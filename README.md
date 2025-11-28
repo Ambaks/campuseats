@@ -19,7 +19,6 @@
 - [System Design & Implementation](#system-design--implementation)
 - [API Documentation](#api-documentation)
 - [Development Workflow](#development-workflow)
-- [Deployment](#deployment)
 
 ---
 
@@ -1068,49 +1067,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Contact
 
 For questions or collaboration opportunities:
-- GitHub: [Your GitHub Profile]
-- LinkedIn: [Your LinkedIn Profile]
-- Email: your.email@example.com
+- LinkedIn: [\[Your LinkedIn Profile\]](https://www.linkedin.com/in/ambaka-le-gregam-287707215/)
+- Email: ambakalegregam@gmail.com
 
 ---
 
-**Built with passion by [Your Name]**
+**Built with passion by Ambaka Le Gregam**
 *Software Engineering Intern Candidate*
 
 ---
-
-## Troubleshooting
-
-### Common Issues
-
-#### Backend won't start
-- **Check PostgreSQL connection**: Ensure PostgreSQL is running and DATABASE_URL is correct
-- **Check port 8000**: Make sure nothing else is using port 8000 (`lsof -i :8000`)
-- **Missing dependencies**: Run `pip install -r app/requirements.txt` from backend directory
-- **Missing .env file**: Copy `backend/.env.example` to `backend/.env` and fill in values
-
-#### Frontend won't start
-- **Check port 3000**: Make sure nothing else is using port 3000 (`lsof -i :3000`)
-- **Missing dependencies**: Run `npm install` from frontend directory
-- **Missing .env.local**: Copy `frontend/.env.example` to `frontend/.env.local` and fill in Firebase/Stripe/Mapbox keys
-
-#### Alembic migration errors
-- **Run from backend directory**: `cd backend` then `alembic upgrade head`
-- **Database connection**: Verify DATABASE_URL in backend/.env
-- **Clean slate**: Drop and recreate database if needed (development only)
-
-#### Firebase Authentication errors
-- **Check Firebase credentials**: Ensure all Firebase env variables are set correctly
-- **Check backend credentials**: Verify FIREBASE_CREDENTIALS_PATH points to valid JSON file
-- **CORS errors**: Make sure FRONTEND_URL is set in backend/.env
-
-#### Docker issues
-- **Port conflicts**: Check if ports 5432, 8000, or 3000 are already in use
-- **Database user mismatch**: Ensure DATABASE_URL uses `postgres` as username (matches docker-compose.yml)
-- **Build failures**: Try `docker-compose down -v` then `docker-compose up --build`
-
-### Getting Help
-- Check the [API Documentation](docs/API.md)
-- Review [Issues](https://github.com/yourusername/campuseats/issues) for known problems
-- Enable detailed logging by checking backend console output
-
