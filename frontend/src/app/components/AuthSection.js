@@ -276,7 +276,7 @@ export default function AuthSection() {
             />
             <TextField
               fullWidth
-              label="Password"
+              label="Confirm Password"
               name="password"
               type="password"
               required
