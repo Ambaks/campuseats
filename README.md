@@ -254,8 +254,8 @@ CampusEats follows a modern **microservices-inspired architecture** with clear s
 
 ### 2. Firebase Authentication System
 
-<image src="./github_assets/login_modal.png" height="200px">
-<image src="./github_assets/registration_modal.png" height="200px">
+<image src="./github_assets/login_modal.png" height="300px"> <image src="./github_assets/registration_modal.png" height="300px">
+
 
 CampusEats implements a secure, token-based authentication flow that synchronizes Firebase auth with a PostgreSQL user database.
 
