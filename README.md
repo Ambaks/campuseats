@@ -1067,7 +1067,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Contact
 
 For questions or collaboration opportunities:
-- LinkedIn: [\[Your LinkedIn Profile\]](https://www.linkedin.com/in/ambaka-le-gregam-287707215/)
+- LinkedIn: [\[My LinkedIn Profile\]](https://www.linkedin.com/in/ambaka-le-gregam-287707215/)
 - Email: ambakalegregam@gmail.com
 
 ---
