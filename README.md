@@ -65,13 +65,6 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 pip install -r app/requirements.txt
 
-# Set up environment variables
-# Create a .env file with:
-# DATABASE_URL=postgresql://postgres:pass@localhost:5432/campuseats
-# FIREBASE_CREDENTIALS_PATH=./campuseats-firebase-adminsdk.json
-# STRIPE_SECRET_KEY=sk_test_...
-# STRIPE_WEBHOOK_SECRET=whsec_...
-
 # Start PostgreSQL (if using Docker)
 docker-compose up -d db
 
@@ -94,17 +87,6 @@ cd frontend
 # Install dependencies
 npm install
 
-# Set up environment variables
-# Create a .env.local file with:
-# NEXT_PUBLIC_API_URL=http://localhost:8000
-# NEXT_PUBLIC_FIREBASE_API_KEY=...
-# NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
-# NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
-# NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
-# NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
-# NEXT_PUBLIC_FIREBASE_APP_ID=...
-# NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-# NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=...
 
 # Start the Next.js development server
 npm run dev
@@ -198,133 +180,6 @@ npm run dev
 ```
 
 The frontend will be available at `http://localhost:3000`
-
-#### Docker Management Commands
-
-**View running containers:**
-```bash
-docker-compose ps
-```
-
-**View logs:**
-```bash
-# All services
-docker-compose logs -f
-
-# Backend only
-docker-compose logs -f backend
-
-# Database only
-docker-compose logs -f db
-```
-
-**Stop containers (keeps data):**
-```bash
-docker-compose down
-```
-
-**Restart containers:**
-```bash
-docker-compose restart
-```
-
-**Stop and remove all data:**
-```bash
-# WARNING: This will delete all database data!
-docker-compose down -v
-```
-
-**Rebuild after code changes:**
-```bash
-# Stop containers
-docker-compose down
-
-# Rebuild and restart
-docker-compose up --build
-```
-
-#### Complete Clean Slate Setup
-
-If you want to completely reset everything and start fresh:
-
-```bash
-# 1. Stop and remove all containers, networks, and volumes
-docker-compose down -v
-
-# 2. Rebuild and start everything fresh
-docker-compose up --build -d
-
-# 3. Wait a few seconds for services to be ready
-sleep 5
-
-# 4. Seed the database in order
-docker-compose exec backend python -m app.seed_user_data
-docker-compose exec backend python -m app.seed_meal_data
-docker-compose exec backend python -m app.seed_reviews
-
-# 5. Verify the data
-docker-compose exec db psql -U postgres -d campuseats -c "SELECT COUNT(*) FROM users; SELECT COUNT(*) FROM meals; SELECT COUNT(*) FROM reviews;"
-```
-
-#### Data Persistence
-
-The database data is stored in a **Docker volume** named `campuseats_postgres_data`. This means:
-
-✅ **Data persists when you:**
-- Run `docker-compose down` and `docker-compose up`
-- Restart your computer
-- Stop and start containers with `docker-compose stop/start`
-
-❌ **Data is deleted when you:**
-- Run `docker-compose down -v` (the `-v` flag removes volumes)
-- Manually delete the volume with `docker volume rm campuseats_postgres_data`
-
-#### Troubleshooting
-
-**Backend won't start:**
-```bash
-# Check logs
-docker-compose logs backend
-
-# Common issues:
-# - Missing .env file → Copy backend/.env.example to backend/.env
-# - Missing Firebase credentials → Add the JSON file to backend/
-# - Port 8000 already in use → Stop other services or change port in docker-compose.yml
-```
-
-**Database connection errors:**
-```bash
-# Check if database is running
-docker-compose ps
-
-# Check database logs
-docker-compose logs db
-
-# Reset database
-docker-compose down -v
-docker-compose up -d db
-```
-
-**Can't connect to localhost:8000:**
-```bash
-# Check if backend is actually running
-docker-compose ps
-
-# Check if port is exposed
-docker-compose port backend 8000
-
-# Try using 127.0.0.1 instead of localhost
-curl http://127.0.0.1:8000/docs
-```
-
-**Need to access the database directly:**
-```bash
-# Open PostgreSQL shell
-docker-compose exec db psql -U postgres -d campuseats
-
-# Or from host machine (if psql is installed)
-psql postgresql://postgres:pass@localhost:5432/campuseats
-```
 
 ## Architecture Overview
 
