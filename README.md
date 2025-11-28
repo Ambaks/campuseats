@@ -600,7 +600,7 @@ The seller dashboard provides a comprehensive management interface for meal prov
 
 ### 7. Interactive Map with Mapbox GL
 
-**[INSERT VIDEO: Map view showing meal pins with color-coded borders, clicking on pins, flying to user location]**
+<video src="https://github.com/user-attachments/assets/a4ccac2e-4767-4fe9-9475-fcbd92098354" controls></video>
 
 The map feature provides a visual representation of nearby meal availability using Mapbox GL JS.
 

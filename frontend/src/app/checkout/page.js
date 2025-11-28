@@ -18,7 +18,7 @@ import StripePaymentButton from "../components/StripePaymentButton";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY)
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
 export default function OrdersPage() {
   const { cart } = useCart();
@@ -29,7 +29,7 @@ export default function OrdersPage() {
 
   // Example subtotal calculation
   const subtotal = cart.reduce(
-    (sum, item) => sum + (item.meal.price || 0) * (item.quantity || 1),
+    (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
     0
   );
 
@@ -199,26 +199,26 @@ export default function OrdersPage() {
             ) : (
               cart.map((item, index) => (
                 <Box key={index} sx={{ display: "flex", mb: 2 }}>
-                  {item.meal.image_url && (
+                  {item.image_url && (
                     <Box sx={{ mr: 2 }}>
                     <Image
-                      src={item.meal.image_url}
-                      alt={item.meal.name}
+                      src={item.image_url}
+                      alt={item.name}
                       width={40}
                       height={40}
                       className="rounded-lg object-cover"
                     />
                   </Box>
-                  
+
                   )}
                   <Box sx={{ flexGrow: 1 }}>
                     <Typography sx={{ color: "black" }}>
-                      {item.meal.name}
+                      {item.name}
                     </Typography>
                   </Box>
                   <Box>
                     <Typography sx={{ color: "black" }}>
-                      ${(item.meal.price || 0) * (item.quantity || 1)}
+                      ${(item.price || 0) * (item.quantity || 1)}
                     </Typography>
                   </Box>
                 </Box>

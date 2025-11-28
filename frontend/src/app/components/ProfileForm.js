@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { TextField, Button, Avatar, MenuItem, Typography, Box } from "@mui/material";
-import { CloudUpload, Logout } from "@mui/icons-material";
+import { TextField, Button, Avatar, MenuItem, Typography, Box, IconButton } from "@mui/material";
+import { CloudUpload, Logout, Save, Edit } from "@mui/icons-material";
 import { checkUsername } from "../services/api";
 import { auth } from "../../../utils/firebase";
 import { getIdToken } from "firebase/auth";
@@ -16,20 +16,16 @@ export default function ProfileForm({ user, setUser }) {
   const [usernameAvailable, setUsernameAvailable] = useState(null);
   const { logout } = useAuth();
 
-
-  // Handle input change
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
 
-    // If username is being updated, check for uniqueness
     if (name === "username" && value.trim() !== "") {
       const available = await checkUsername(value);
       setUsernameAvailable(available);
     }
   };
 
-  // Handle profile picture upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -38,7 +34,6 @@ export default function ProfileForm({ user, setUser }) {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -51,7 +46,7 @@ export default function ProfileForm({ user, setUser }) {
     }
 
     const userData = {
-      id: user.id, // Ensure the user ID is included
+      id: user.id,
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
@@ -62,7 +57,6 @@ export default function ProfileForm({ user, setUser }) {
     };
 
     try {
-      // Get the authentication token
       const currentUser = auth.currentUser;
       if (!currentUser) {
         throw new Error("You must be logged in to update your profile");
@@ -78,13 +72,13 @@ export default function ProfileForm({ user, setUser }) {
         },
         body: JSON.stringify(userData),
       });
-      console.log(JSON.stringify(userData))
+
       if (!response.ok) {
         throw new Error("Failed to update profile");
       }
 
       const updatedUser = await response.json();
-      setUser(updatedUser); // Update state with new user data
+      setUser(updatedUser);
     } catch (err) {
       console.error("Error updating profile:", err);
       setError(err.message);
@@ -96,7 +90,6 @@ export default function ProfileForm({ user, setUser }) {
   const handleLogout = async () => {
     try {
       await logout();
-      // Clear local storage
       localStorage.clear();
       sessionStorage.clear();
     } catch (error) {
@@ -106,33 +99,96 @@ export default function ProfileForm({ user, setUser }) {
   };
 
   return (
-    <>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5" align="center" gutterBottom sx={{ flex: 1 }}>
-          Edit Profile
-        </Typography>
-        <Button
-          variant="outlined"
-          color="error"
-          startIcon={<Logout />}
+    <Box>
+      <Box
+        sx={{
+          background: "linear-gradient(135deg, #FF7F51 0%, #ff9a73 100%)",
+          color: "white",
+          p: 3,
+          borderRadius: "12px 12px 0 0",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Box>
+          <Typography variant="h4" fontWeight="700" sx={{ mb: 0.5 }}>
+            My Profile
+          </Typography>
+          <Typography variant="body2" sx={{ opacity: 0.95 }}>
+            Manage your account settings
+          </Typography>
+        </Box>
+        <IconButton
           onClick={handleLogout}
-          size="small"
+          sx={{
+            backgroundColor: "rgba(255, 255, 255, 0.2)",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.3)",
+            },
+          }}
         >
-          Logout
-        </Button>
+          <Logout />
+        </IconButton>
       </Box>
 
-      {/* Profile Picture */}
-      <div className="flex flex-col items-center my-4">
-        <Avatar
-          src={user.profilePicture}
-          sx={{ width: 100, height: 100, marginBottom: 2 }}
-        />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          mb: 4,
+          mt: -5,
+        }}
+      >
+        <Box
+          sx={{
+            position: "relative",
+            mb: 2,
+          }}
+        >
+          <Avatar
+            src={user.profilePicture}
+            sx={{
+              width: 120,
+              height: 120,
+              border: "4px solid white",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+            }}
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              backgroundColor: "#FF7F51",
+              borderRadius: "50%",
+              p: 1,
+              border: "3px solid white",
+            }}
+          >
+            <Edit sx={{ color: "white", fontSize: 18 }} />
+          </Box>
+        </Box>
         <Button
           variant="contained"
           component="label"
           startIcon={<CloudUpload />}
-          className="mt-2"
+          sx={{
+            backgroundColor: "#FF7F51",
+            color: "white",
+            borderRadius: "20px",
+            px: 3,
+            textTransform: "none",
+            fontWeight: 600,
+            boxShadow: "0 4px 12px rgba(255, 127, 81, 0.3)",
+            "&:hover": {
+              backgroundColor: "#ff6a3d",
+              boxShadow: "0 6px 16px rgba(255, 127, 81, 0.4)",
+            },
+          }}
         >
           Upload Photo
           <input
@@ -142,26 +198,70 @@ export default function ProfileForm({ user, setUser }) {
             onChange={handleImageUpload}
           />
         </Button>
-      </div>
+      </Box>
 
-      {/* Profile Form */}
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <TextField
-          fullWidth
-          label="First Name"
-          name="first_name"
-          value={user.first_name || ""}
-          onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          fullWidth
-          label="Last Name"
-          name="last_name"
-          value={user.last_name || ""}
-          onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-        />
+      {error && (
+        <Box
+          sx={{
+            backgroundColor: "#ffe6e6",
+            border: "1px solid #ff4444",
+            borderRadius: "8px",
+            p: 2,
+            mb: 3,
+          }}
+        >
+          <Typography color="error" variant="body2">
+            {error}
+          </Typography>
+        </Box>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <Box sx={{ display: "flex", gap: 2, mb: 2.5 }}>
+          <TextField
+            fullWidth
+            label="First Name"
+            name="first_name"
+            value={user.first_name || ""}
+            onChange={handleChange}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                "&:hover fieldset": {
+                  borderColor: "#FF7F51",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#FF7F51",
+                },
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#FF7F51",
+              },
+            }}
+          />
+          <TextField
+            fullWidth
+            label="Last Name"
+            name="last_name"
+            value={user.last_name || ""}
+            onChange={handleChange}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                "&:hover fieldset": {
+                  borderColor: "#FF7F51",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#FF7F51",
+                },
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#FF7F51",
+              },
+            }}
+          />
+        </Box>
+
         <TextField
           fullWidth
           label="Email"
@@ -169,70 +269,155 @@ export default function ProfileForm({ user, setUser }) {
           type="email"
           value={user.email || ""}
           onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-          disabled // Email shouldn't be changed
+          disabled
+          sx={{
+            mb: 2.5,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
+              backgroundColor: "#f5f5f5",
+            },
+          }}
         />
-        <TextField
-          fullWidth
-          label="Phone"
-          name="phone_number"
-          value={user.phone_number || ""}
-          onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-        />
-        {error && <Typography color="error">{error}</Typography>}
-        <TextField
-          fullWidth
-          select
-          label="Gender"
-          name="gender"
-          value={user.gender || ""}
-          onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-        >
-          <MenuItem value="Male">Male</MenuItem>
-          <MenuItem value="Female">Female</MenuItem>
-          <MenuItem value="Other">Other</MenuItem>
-        </TextField>
-        <TextField
-          fullWidth
-          label="Age"
-          name="age"
-          type="number"
-          value={user.age || ""}
-          onChange={handleChange}
-          sx={{ marginBottom: 2 }}
-        />
+
         <TextField
           fullWidth
           label="Username"
           name="username"
           value={user.username || ""}
           onChange={handleChange}
-          sx={{ marginBottom: 2 }}
           helperText={
             usernameAvailable === null
-              ? ""
+              ? "Choose a unique username"
               : usernameAvailable
               ? "✅ Username is available"
               : "❌ Username is already taken"
           }
           error={usernameAvailable === false}
+          sx={{
+            mb: 2.5,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
+              "&:hover fieldset": {
+                borderColor: "#FF7F51",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: usernameAvailable === false ? "#ff4444" : "#FF7F51",
+              },
+            },
+            "& .MuiInputLabel-root.Mui-focused": {
+              color: usernameAvailable === false ? "#ff4444" : "#FF7F51",
+            },
+            "& .MuiFormHelperText-root": {
+              fontWeight: 500,
+            },
+          }}
         />
 
-        {error && <Typography color="error">{error}</Typography>}
+        <TextField
+          fullWidth
+          label="Phone"
+          name="phone_number"
+          value={user.phone_number || ""}
+          onChange={handleChange}
+          sx={{
+            mb: 2.5,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
+              "&:hover fieldset": {
+                borderColor: "#FF7F51",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#FF7F51",
+              },
+            },
+            "& .MuiInputLabel-root.Mui-focused": {
+              color: "#FF7F51",
+            },
+          }}
+        />
 
-        {/* Save Button */}
+        <Box sx={{ display: "flex", gap: 2, mb: 2.5 }}>
+          <TextField
+            fullWidth
+            select
+            label="Gender"
+            name="gender"
+            value={user.gender || ""}
+            onChange={handleChange}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                "&:hover fieldset": {
+                  borderColor: "#FF7F51",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#FF7F51",
+                },
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#FF7F51",
+              },
+            }}
+          >
+            <MenuItem value="Male">Male</MenuItem>
+            <MenuItem value="Female">Female</MenuItem>
+            <MenuItem value="Other">Other</MenuItem>
+          </TextField>
+
+          <TextField
+            fullWidth
+            label="Age"
+            name="age"
+            type="number"
+            value={user.age || ""}
+            onChange={handleChange}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "8px",
+                "&:hover fieldset": {
+                  borderColor: "#FF7F51",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#FF7F51",
+                },
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#FF7F51",
+              },
+            }}
+          />
+        </Box>
+
         <Button
           fullWidth
           type="submit"
           variant="contained"
-          color="primary"
           disabled={loading}
+          startIcon={<Save />}
+          sx={{
+            backgroundColor: "#FF7F51",
+            color: "white",
+            py: 1.5,
+            fontSize: "1rem",
+            fontWeight: 600,
+            borderRadius: "8px",
+            textTransform: "none",
+            boxShadow: "0 4px 12px rgba(255, 127, 81, 0.3)",
+            "&:hover": {
+              backgroundColor: "#ff6a3d",
+              boxShadow: "0 6px 16px rgba(255, 127, 81, 0.4)",
+              transform: "translateY(-1px)",
+            },
+            "&:disabled": {
+              backgroundColor: "#ccc",
+              color: "#666",
+            },
+            transition: "all 0.3s ease",
+          }}
         >
-          {loading ? "Saving..." : "Save Changes"}
+          {loading ? "Saving Changes..." : "Save Changes"}
         </Button>
       </form>
-    </>
+    </Box>
   );
 }

@@ -27,7 +27,7 @@ const CartIcon = () => {
   const handleDrawerClose = () => setDrawerOpen(false);
 
   // Calculate subtotal
-  const subtotal = cart.reduce((total, item) => total + item.meal.price * item.quantity, 0);
+  const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <>
@@ -77,16 +77,16 @@ const CartIcon = () => {
                 <Box key={item.meal_id} sx={{ display: "flex", mb: 2, borderBottom: "1px solid #eee", pb: 2 }}>
                   {/* Item Image */}
                   <Box sx={{ width: 100, height: 100, position: "relative", mr: 2 }}>
-                    <Image src={item.meal.image_url} alt={item.meal.name} layout="fill" objectFit="cover" className="rounded-lg" />
+                    <Image src={item.image_url} alt={item.name} layout="fill" objectFit="cover" className="rounded-lg" />
                   </Box>
 
                   {/* Item Details */}
                   <Box sx={{ flexGrow: 1 }}>
                     <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                      {item.meal.name}
+                      {item.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      ${item.meal.price.toFixed(2)}
+                      ${item.price.toFixed(2)}
                     </Typography>
 
                     {/* Quantity Controls & Remove Button in One Row */}

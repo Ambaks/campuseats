@@ -52,21 +52,21 @@ export const OrderProvider = ({ children }) => {
   // Update order whenever cart changes
   useEffect(() => {
     if (!Array.isArray(cart)) return;
-  
+
     const mealsFromCart = cart.map((item) => ({
-      id: item.meal.id,
-      name: item.meal.name,
-      price: item.meal.price,
+      id: item.meal_id,
+      name: item.name,
+      price: item.price,
       quantity: item.quantity,
     }));
-  
+
     console.log("✅ mealsFromCart:", mealsFromCart);
-  
+
     const totalPrice = mealsFromCart.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-  
+
     setOrder((prevOrder) => ({
       ...prevOrder,
       meals: mealsFromCart,

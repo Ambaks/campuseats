@@ -140,11 +140,19 @@ const distanceColor = getDistanceColor(numericDistance);
               sx={{ mt: 2 }}
             >
               {meal.timeslots?.length ? (
-                meal.timeslots.map((slot, index) => (
-                  <MenuItem key={index} value={slot}>
-                    {slot}
-                  </MenuItem>
-                ))
+                meal.timeslots.map((slot, index) => {
+                  const displayText = typeof slot === 'object' && slot.start && slot.end
+                    ? `${slot.start} - ${slot.end}`
+                    : slot;
+                  const value = typeof slot === 'object'
+                    ? JSON.stringify(slot)
+                    : slot;
+                  return (
+                    <MenuItem key={index} value={value}>
+                      {displayText}
+                    </MenuItem>
+                  );
+                })
               ) : (
                 <MenuItem disabled>No timeslots available</MenuItem>
               )}

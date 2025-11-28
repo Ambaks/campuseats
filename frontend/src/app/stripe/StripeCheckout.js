@@ -1,7 +1,7 @@
 // lib/stripeCheckout.js
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe("pk_test_51RQalzQwjXEGfz0j733YmmaleAV0PbLbAuGvu1kmJaZe5Wi71zLPQ4iB6C2yO5snIK0HRTsCc61vCnJljYJsKCkz00UANoJW7L");
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 /**
  * Redirects the user to Stripe Checkout.
