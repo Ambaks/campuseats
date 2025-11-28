@@ -268,10 +268,51 @@ export default function SellerDashboard() {
           })}
         </Grid>
 
-        <Drawer anchor="bottom" open={openDrawer !== null} onClose={() => setOpenDrawer(null)}>
-          <Box sx={{ height: "100vh", backgroundColor: "white", position: "relative" }}>
-            <Box sx={{ width: "100%", textAlign: "center", p: 1, cursor: "pointer" }} onClick={() => setOpenDrawer(null)}>
-              <Box sx={{ width: 40, height: 5, backgroundColor: "gray", borderRadius: 2, mx: "auto" }}></Box>
+        <Drawer
+          anchor="bottom"
+          open={openDrawer !== null}
+          onClose={() => setOpenDrawer(null)}
+          PaperProps={{
+            sx: {
+              borderTopLeftRadius: "16px",
+              borderTopRightRadius: "16px",
+              maxHeight: "95vh",
+            },
+          }}
+        >
+          <Box
+            sx={{
+              height: "100vh",
+              backgroundColor: "#fafafa",
+              position: "relative",
+              overflowY: "auto",
+            }}
+          >
+            {/* Drag Handle */}
+            <Box
+              sx={{
+                width: "100%",
+                textAlign: "center",
+                p: 2,
+                cursor: "pointer",
+                position: "sticky",
+                top: 0,
+                backgroundColor: "white",
+                borderBottom: "1px solid #f0f0f0",
+                zIndex: 10,
+              }}
+              onClick={() => setOpenDrawer(null)}
+            >
+              <Box
+                sx={{
+                  width: 40,
+                  height: 5,
+                  backgroundColor: "#FF7F51",
+                  borderRadius: 2,
+                  mx: "auto",
+                  opacity: 0.5,
+                }}
+              ></Box>
             </Box>
             {openDrawer === "Menu" && <Menu meals={chefMeals} setMeals={setChefMeals} user={user} />}
             {openDrawer === "Orders" && <OrdersTab />}

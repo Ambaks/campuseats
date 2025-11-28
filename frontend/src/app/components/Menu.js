@@ -165,15 +165,26 @@ export default function Menu({ meals, setMeals, user }) {
   };
 
   return (
-    <Container maxWidth="md">
-
-      <Divider sx={{ width: "90%", height: 2, bgcolor: "black", mx: "auto", my: 3 }} />
-
-      <Typography variant="h3" align="center" gutterBottom>
-        FOOD MENU
-      </Typography>
-      
-      <Divider sx={{ width: "90%", height: 2, bgcolor: "black", mx: "auto", my: 3 }} />
+    <Container maxWidth="md" sx={{ py: 3 }}>
+      {/* Header with gradient */}
+      <Box
+        sx={{
+          background: "linear-gradient(135deg, #FF7F51 0%, #ff9a73 100%)",
+          color: "white",
+          p: 3,
+          borderRadius: "12px",
+          textAlign: "center",
+          mb: 3,
+          boxShadow: "0 4px 12px rgba(255, 127, 81, 0.3)",
+        }}
+      >
+        <Typography variant="h4" fontWeight="700" sx={{ mb: 0.5 }}>
+          Food Menu
+        </Typography>
+        <Typography variant="body2" sx={{ opacity: 0.95 }}>
+          Manage your delicious offerings
+        </Typography>
+      </Box>
 
       <Grid container spacing={2} sx={{ mt: 2 }}>
         {meals.length > 0 ? (
@@ -182,12 +193,21 @@ export default function Menu({ meals, setMeals, user }) {
                 <Card
                   sx={{
                     bgcolor: "white",
-                    borderRadius: 4,
+                    borderRadius: "12px",
                     display: "flex",
                     alignItems: "center",
                     p: 1,
-                    height: { xs: 140, sm: 140 }, // Adjust height dynamically
-                    flexWrap: "wrap", // Ensures elements wrap properly on smaller screens
+                    height: { xs: 140, sm: 140 },
+                    flexWrap: "wrap",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+                    transition: "all 0.3s ease",
+                    border: "2px solid transparent",
+                    "&:hover": {
+                      transform: "translateY(-4px)",
+                      boxShadow: "0 8px 20px rgba(255, 127, 81, 0.2)",
+                      borderColor: "#FF7F51",
+                    },
                   }}
                   onClick={() => handleMealClick(meal, index)}
                 >
@@ -252,45 +272,177 @@ export default function Menu({ meals, setMeals, user }) {
               
             ))
         ) : (
-            <Box sx={{ display: "flex", mx: "auto", mr: 1.5, justifyContent: "center", alignItems: "center", width: "90%", textAlign: "center", bgcolor: "#e0e0e0", p: 2, borderRadius: 2 }}>
-            <Typography variant="body1">Add meals to see them appear on your menu</Typography>
+            <Box sx={{
+              display: "flex",
+              mx: "auto",
+              mr: 1.5,
+              justifyContent: "center",
+              alignItems: "center",
+              width: "90%",
+              textAlign: "center",
+              background: "linear-gradient(135deg, #FFF5F0 0%, #FFE5DC 100%)",
+              border: "2px dashed #FF7F51",
+              p: 3,
+              borderRadius: "12px"
+            }}>
+              <Typography variant="body1" color="#FF7F51" fontWeight="600">
+                Add meals to see them appear on your menu
+              </Typography>
             </Box>
         )}
         </Grid>
 
-
-      <Divider sx={{ width: "90%", height: 2, bgcolor: "black", mx: "auto", mb: 3, mt: 5 }} />
-
-      <Button variant="contained" fullWidth sx={{ mt: 2, backgroundColor: "#00A19D", "&:hover": { backgroundColor: "#006666" } }} onClick={() => { setOpenModal(true); setEditMode(false); }}>
-        Add Meal
+      <Button
+        variant="contained"
+        fullWidth
+        sx={{
+          mt: 4,
+          mb: 2,
+          py: 1.5,
+          fontSize: "1rem",
+          fontWeight: 600,
+          borderRadius: "8px",
+          textTransform: "none",
+          backgroundColor: "#FF7F51",
+          color: "white",
+          boxShadow: "0 4px 12px rgba(255, 127, 81, 0.3)",
+          "&:hover": {
+            backgroundColor: "#ff6a3d",
+            boxShadow: "0 6px 16px rgba(255, 127, 81, 0.4)",
+            transform: "translateY(-1px)",
+          },
+          transition: "all 0.3s ease",
+        }}
+        onClick={() => { setOpenModal(true); setEditMode(false); }}
+      >
+        Add New Meal
       </Button>
 
       {/* Add/Edit Meal Modal */}
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
-        <Box 
-            sx={{ 
-            position: "absolute", 
-            top: "2%",  // Reduced top margin
+        <Box
+            sx={{
+            position: "absolute",
+            top: "2%",
             left: "50%",
-            transform: "translate(-50%, 0%)", 
+            transform: "translate(-50%, 0%)",
             width: "90%",
             maxWidth: 400,
             bgcolor: "white",
             p: 3,
-            borderRadius: 2,
-            maxHeight: "90vh", // Ensures modal is not too tall
-            overflowY: "auto", // Enables scrolling inside modal
+            borderRadius: "16px",
+            maxHeight: "90vh",
+            overflowY: "auto",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.15)",
             }}
         >
-            <Divider sx={{ width: "90%", height: 2, bgcolor: "black", mx: "auto", mb: 1}} />
-            <Typography variant="h6" align="center">{editMode ? "EDIT MEAL" : "ADD A MEAL"}</Typography>
-            <Divider sx={{ width: "90%", height: 2, bgcolor: "black", mx: "auto", mb: 1, mt: 1 }} />
+            <Box
+              sx={{
+                background: "linear-gradient(135deg, #FF7F51 0%, #ff9a73 100%)",
+                color: "white",
+                p: 2,
+                borderRadius: "8px",
+                textAlign: "center",
+                mb: 3,
+              }}
+            >
+              <Typography variant="h6" fontWeight="700">
+                {editMode ? "Edit Meal" : "Add New Meal"}
+              </Typography>
+            </Box>
             <form onSubmit={handleSubmit}>
-            <TextField fullWidth label="Meal Name" name="name" value={editMode ? selectedMeal.name : mealData.name} onChange={handleChange} margin="normal" required />
-            <TextField fullWidth label="Description" name="description" value={editMode ? selectedMeal.description : mealData.description} onChange={handleChange} margin="normal" multiline rows={3} required />
-            <TextField fullWidth label="Ingredients" name="ingredients" value={editMode ? selectedMeal.ingredients : mealData.ingredients} onChange={handleChange} margin="normal" multiline rows={3} required />
-            <TextField fullWidth label="Price ($)" name="price" type="number" value={editMode ? selectedMeal.price : mealData.price} onChange={handleChange} margin="normal" required />
-            <TextField fullWidth label="Quantity" name="quantity" type="number" value={editMode ? selectedMeal.quantity : mealData.quantity} onChange={handleChange} margin="normal" disabled={editMode ? selectedMeal.unlimited : mealData.unlimited} required={!mealData.unlimited} />
+            <TextField
+              fullWidth
+              label="Meal Name"
+              name="name"
+              value={editMode ? selectedMeal.name : mealData.name}
+              onChange={handleChange}
+              margin="normal"
+              required
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": { borderColor: "#FF7F51" },
+                  "&.Mui-focused fieldset": { borderColor: "#FF7F51" },
+                },
+                "& .MuiInputLabel-root.Mui-focused": { color: "#FF7F51" },
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Description"
+              name="description"
+              value={editMode ? selectedMeal.description : mealData.description}
+              onChange={handleChange}
+              margin="normal"
+              multiline
+              rows={3}
+              required
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": { borderColor: "#FF7F51" },
+                  "&.Mui-focused fieldset": { borderColor: "#FF7F51" },
+                },
+                "& .MuiInputLabel-root.Mui-focused": { color: "#FF7F51" },
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Ingredients"
+              name="ingredients"
+              value={editMode ? selectedMeal.ingredients : mealData.ingredients}
+              onChange={handleChange}
+              margin="normal"
+              multiline
+              rows={3}
+              required
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": { borderColor: "#FF7F51" },
+                  "&.Mui-focused fieldset": { borderColor: "#FF7F51" },
+                },
+                "& .MuiInputLabel-root.Mui-focused": { color: "#FF7F51" },
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Price ($)"
+              name="price"
+              type="number"
+              value={editMode ? selectedMeal.price : mealData.price}
+              onChange={handleChange}
+              margin="normal"
+              required
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": { borderColor: "#FF7F51" },
+                  "&.Mui-focused fieldset": { borderColor: "#FF7F51" },
+                },
+                "& .MuiInputLabel-root.Mui-focused": { color: "#FF7F51" },
+              }}
+            />
+            <TextField
+              fullWidth
+              label="Quantity"
+              name="quantity"
+              type="number"
+              value={editMode ? selectedMeal.quantity : mealData.quantity}
+              onChange={handleChange}
+              margin="normal"
+              disabled={editMode ? selectedMeal.unlimited : mealData.unlimited}
+              required={!mealData.unlimited}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": { borderColor: "#FF7F51" },
+                  "&.Mui-focused fieldset": { borderColor: "#FF7F51" },
+                },
+                "& .MuiInputLabel-root.Mui-focused": { color: "#FF7F51" },
+              }}
+            />
             <FormControlLabel control={<Checkbox checked={editMode ? selectedMeal.unlimited : mealData.unlimited} onChange={handleCheckboxChange} />} label="Unlimited Quantity" />
             <Box sx={{ mt: 2 }}>
                 <FileUploadButton onChange={handleImageChange} />
@@ -298,12 +450,49 @@ export default function Menu({ meals, setMeals, user }) {
 
             <PickupTimes timeslots={timeslots} setTimeslots={setTimeslots} />
 
-            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2, backgroundColor: "#00A19D", "&:hover": { backgroundColor: "#006666" } }}>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              sx={{
+                mt: 3,
+                py: 1.5,
+                fontSize: "1rem",
+                fontWeight: 600,
+                borderRadius: "8px",
+                textTransform: "none",
+                backgroundColor: "#FF7F51",
+                color: "white",
+                boxShadow: "0 4px 12px rgba(255, 127, 81, 0.3)",
+                "&:hover": {
+                  backgroundColor: "#ff6a3d",
+                  boxShadow: "0 6px 16px rgba(255, 127, 81, 0.4)",
+                },
+              }}
+            >
                 {editMode ? "Update Meal" : "Post Meal"}
             </Button>
             {editMode && (
-                <Button fullWidth sx={{ color: "white", mt: 2, backgroundColor: "#ff4d4d", "&:hover": { backgroundColor: "#cc0000" } }} onClick={handleRemoveMeal}>
-                Remove Meal
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  sx={{
+                    mt: 2,
+                    py: 1.5,
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    borderRadius: "8px",
+                    textTransform: "none",
+                    color: "#ff4d4d",
+                    borderColor: "#ff4d4d",
+                    "&:hover": {
+                      backgroundColor: "#fff5f5",
+                      borderColor: "#cc0000",
+                    },
+                  }}
+                  onClick={handleRemoveMeal}
+                >
+                  Remove Meal
                 </Button>
             )}
             </form>
