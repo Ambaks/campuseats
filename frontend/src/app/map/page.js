@@ -96,7 +96,16 @@ const MapboxMap = () => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const { latitude, longitude } = pos.coords;
       setUserLocation({ latitude, longitude });
-      map.flyTo({ center: [longitude, latitude], zoom: 16 });
+      setTimeout(() => {
+        map.flyTo({
+          center: [longitude, latitude],
+          zoom: 16,
+          speed: 1.5,
+          curve: 1.2,
+          easing: (t) => t,
+          essential: true
+        });
+      }, 3000);
 
       // Remove old user marker if it exists
       if (userMarker.current) {
@@ -150,7 +159,14 @@ const MapboxMap = () => {
 
   const goToUserLocation = () => {
     if (userLocation && map) {
-      map.flyTo({ center: [userLocation.longitude, userLocation.latitude], zoom: 16 });
+      map.flyTo({
+        center: [userLocation.longitude, userLocation.latitude],
+        zoom: 16,
+        speed: 1.5,
+        curve: 1.2,
+        easing: (t) => t,
+        essential: true
+      });
     }
   };
 
